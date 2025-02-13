@@ -9,10 +9,11 @@ import dotenv from "dotenv";
 import multer from "multer";
 import cors from "cors";
 
-const uri =
-  "mongodb+srv://pixelixanimationstudio:LaGfqFIktNsCWL9z@cluster0.hjsp2.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
-
+// const uri =
+//   "mongodb+srv://pixelixanimationstudio:LaGfqFIktNsCWL9z@cluster0.hjsp2.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const uri =  "mongodb+srv://kir:usXaOSKSlmZOb1Er@cluster0.1dmgl.mongodb.net/"
 // const conn = mongoose.createConnection(uri);
+
 
 dotenv.config();
 
