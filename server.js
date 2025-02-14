@@ -74,7 +74,7 @@ const getELONPrice = async () => {
       return; 
     }
 
-    let message = `Текущая цена Dogelon Mars (ELON): $${parsedPrice}`;
+    let message = `(ELON): ${parsedPrice} $`;
     message += parsedPrice > previousPrice ? ' ⬆️' : ' ⬇️';
 
     if (isPriceChangedBy10Percent(parsedPrice)) {
