@@ -62,7 +62,7 @@ const getELONPrice = async () => {
     const data = await response.json();
     const price = data['dogelon-mars']?.usd;
   
-    let message = `(ELON): $${price}`
+    let message = `(ELON): ${price} $`
     const parsedPrice = parseFloat(price); 
 
     if (isPriceChangedBy10Percent(parsedPrice)){
