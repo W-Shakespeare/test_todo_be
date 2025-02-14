@@ -40,7 +40,7 @@ const sendBulkMessages = async (message) => {
 };
 
 
-let previousPrice = 100;
+let previousPrice = null;
 
 const isPriceChangedBy10Percent = (newPrice) => {
   if (previousPrice === null) {
@@ -49,7 +49,7 @@ const isPriceChangedBy10Percent = (newPrice) => {
   }
 
   const priceChange = Math.abs((newPrice - previousPrice) / previousPrice) * 100;
-  return priceChange >= 2;
+  return priceChange >= 1;
 };
 
 
