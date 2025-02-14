@@ -52,7 +52,7 @@ const isPriceChangedBy10Percent = (newPrice) => {
   }
 
   const priceChange = Math.abs((newPrice - previousPrice) / previousPrice) * 100;
-  return priceChange >= 0.5;
+  return priceChange >= 0.2;
 };
 
 
@@ -62,7 +62,7 @@ const getELONPrice = async () => {
     const data = await response.json();
     const price = data['dogelon-mars']?.usd;
   
-    const message = `Текущая цена Dogelon Mars (ELON): $${price}`
+    let message = `Текущая цена Dogelon Mars (ELON): $${price}`
     const parsedPrice = parseFloat(price); 
 
     if (isPriceChangedBy10Percent(parsedPrice)){
