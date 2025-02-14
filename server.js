@@ -77,10 +77,12 @@ const getELONPrice = async () => {
     }
 
     let message = `(ELON): ${parsedPrice} $`;
-    message += parsedPrice > previousPrice ? ' ⬆️' : ' ⬇️';
+   
 
     if (isPriceChangedBy10Percent(parsedPrice)) {
       console.log('message', message);
+      const priceChange = Math.abs((newPrice - previousPrice) / previousPrice) * 100;
+      message += parsedPrice > previousPrice ? `  ${priceChange}%  ⬆️`  : `  ${priceChange}%  ⬇️`;
       await sendBulkMessages(message);
       previousPrice = parsedPrice;
     }
