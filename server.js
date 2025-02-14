@@ -64,8 +64,10 @@ const getELONPrice = async () => {
   
     const message = `Текущая цена Dogelon Mars (ELON): $${price}`
     const parsedPrice = parseFloat(price); 
-    
+
     if (isPriceChangedBy10Percent(parsedPrice)){
+      message += parsedPrice > previousPrice ? ' ⬆️' : ' ⬇️';
+      
       console.log('message',message)
        await sendBulkMessages(message);
        previousPrice = parsedPrice
