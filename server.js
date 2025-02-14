@@ -20,6 +20,7 @@ const bot = new TelegramBot(telegramBotApi, { polling: true });
 const getAllUsers = async () => {
   try {
     const users = await UserIdModel.find(); // Получаем все записи из коллекции User
+    console.log('users',users)
     return users.map(user => user.userId); // Возвращаем массив userId
   } catch (err) {
     console.error('Error fetching users from database:', err);
@@ -30,6 +31,7 @@ const getAllUsers = async () => {
 const sendBulkMessages = async (message) => {
   try {
     const users = await getAllUsers(); // Получаем всех пользователей
+    console.log('users2',users)
     for (const userId of users) {
       await bot.sendMessage(userId, message); // Отправляем сообщение каждому пользователю
       console.log(`Message sent to ${userId}`);
@@ -45,11 +47,12 @@ let previousPrice = null;
 const isPriceChangedBy10Percent = (newPrice) => {
   if (previousPrice === null) {
     previousPrice = newPrice;
+    console.log('previousPrice',previousPrice)
     return false; 
   }
 
   const priceChange = Math.abs((newPrice - previousPrice) / previousPrice) * 100;
-  return priceChange >= 1;
+  return priceChange >= 0.5;
 };
 
 
@@ -63,6 +66,7 @@ const getELONPrice = async () => {
     const parsedPrice = parseFloat(price); 
     
     if (isPriceChangedBy10Percent(parsedPrice)){
+      console.log('message',message)
        await sendBulkMessages(message);
        previousPrice = parsedPrice
       }
