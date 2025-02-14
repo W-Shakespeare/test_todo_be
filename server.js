@@ -45,9 +45,9 @@ const sendBulkMessages = async (message) => {
 let previousPrice = null;
 
 const isPriceChangedBy10Percent = (newPrice) => {
-  if (previousPrice === null) {
+  if (previousPrice === null || isNaN(previousPrice)) {
     previousPrice = newPrice;
-    console.log('previousPrice',previousPrice)
+    console.log('previousPrice ', previousPrice);
     return false; 
   }
 
@@ -56,24 +56,33 @@ const isPriceChangedBy10Percent = (newPrice) => {
 };
 
 
+
 const getELONPrice = async () => {
   try {
     const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=dogelon-mars&vs_currencies=usd');
     const data = await response.json();
     const price = data['dogelon-mars']?.usd;
-  
-    let message = `(ELON): ${price} $`
-    const parsedPrice = parseFloat(price); 
 
-    if (isPriceChangedBy10Percent(parsedPrice)){
-      message += parsedPrice > previousPrice ? ' ⬆️' : ' ⬇️';
-      // message += parsedPrice > previousPrice ? ' 🟢' : ' 🔴';
-      
-      console.log('message',message)
-       await sendBulkMessages(message);
-       previousPrice = parsedPrice
-      }
-  
+    if ( !price ) {
+      console.error('Цена не найдена в ответе:', data);
+      return; 
+    }
+
+    const parsedPrice = parseFloat(price);
+    if (isNaN(parsedPrice)) {
+      console.error('Полученная цена не является числом:', price);
+      return; 
+    }
+
+    let message = `Текущая цена Dogelon Mars (ELON): $${parsedPrice}`;
+    message += parsedPrice > previousPrice ? ' ⬆️' : ' ⬇️';
+
+    if (isPriceChangedBy10Percent(parsedPrice)) {
+      console.log('message', message);
+      await sendBulkMessages(message);
+      previousPrice = parsedPrice;
+    }
+
   } catch (error) {
     console.error('Ошибка при получении данных:', error);
   }
