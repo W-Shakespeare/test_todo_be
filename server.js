@@ -52,16 +52,18 @@ const isPriceChangedBy10Percent = (newPrice) => {
   }
 
   const priceChange = Math.abs((newPrice - previousPrice) / previousPrice) * 100;
-  return priceChange >= 0.1;
+  return priceChange >= 10;
 };
 
 
 
 const getELONPrice = async () => {
   try {
-    const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=dogelon-mars&vs_currencies=usd');
+    // https://api.geckoterminal.com/api/v2
+    // const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=dogelon-mars&vs_currencies=usd');
+    const response = await fetch('https://api.geckoterminal.com/api/v2/networks/eth/tokens/0x761d38e5ddf6ccf6cf7c55759d5210750b5d60f3');
     const data = await response.json();
-    const price = data['dogelon-mars']?.usd;
+    const price = data['data']?.attributes?.price_usd;
 
     if ( !price ) {
       console.error('Цена не найдена в ответе:', data);
@@ -169,7 +171,7 @@ bot.onText(/\/start/, async (msg) => {
   bot.sendMessage(userId, 'Вы включили бота!'); // Отправляем сообщение пользователю
 });
 
-setInterval(getELONPrice, 1000 * 60);
+setInterval(getELONPrice, 1000 * 60 * 7);
 // Telegram crypto bot end
 
 
