@@ -59,8 +59,6 @@ const isPriceChangedBy10Percent = (newPrice) => {
 
 const getELONPrice = async () => {
   try {
-    // https://api.geckoterminal.com/api/v2
-    // const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=dogelon-mars&vs_currencies=usd');
     const response = await fetch('https://api.geckoterminal.com/api/v2/networks/eth/tokens/0x761d38e5ddf6ccf6cf7c55759d5210750b5d60f3');
     const data = await response.json();
     const price = data['data']?.attributes?.price_usd;
@@ -149,6 +147,12 @@ app.post('/send-telegram-message', (req, res) => {
 
   sendBulkMessages(message);
   res.send('Messages are being sent');
+});
+
+app.get("/server-status", verifyToken,async ()=>{
+  const users = await getAllUsers(); 
+  console.log('users in mongo db',users)
+  console.log(`previousPrice ${previousPrice}`);
 });
 
 
