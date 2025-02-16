@@ -149,7 +149,7 @@ app.post('/send-telegram-message', (req, res) => {
   res.send('Messages are being sent');
 });
 
-app.get("/server-status", verifyToken,async ()=>{
+app.get("/server-status",async ()=>{
   const users = await getAllUsers(); 
   console.log('users in mongo db',users)
   console.log(`previousPrice ${previousPrice}`);
