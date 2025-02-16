@@ -14,8 +14,8 @@ const telegramBotApi ='8014981330:AAHuxzKfMUn4ahkjML_kBmBCg-9SxtJinwc'
 
 import UserIdModel from './models/userId.js'
 
-const bot = new TelegramBot(telegramBotApi, { polling: true });
-// const users=['442052582']
+const bot = new TelegramBot(telegramBotApi);
+bot.setWebHook('https://test-todo-be.onrender.com/bot');
 
 const getAllUsers = async () => {
   try {
@@ -62,6 +62,8 @@ const getELONPrice = async () => {
     const response = await fetch('https://api.geckoterminal.com/api/v2/networks/eth/tokens/0x761d38e5ddf6ccf6cf7c55759d5210750b5d60f3');
     const data = await response.json();
     const price = data['data']?.attributes?.price_usd;
+
+    console.log('request elon price',price)
 
     if ( !price ) {
       console.error('Цена не найдена в ответе:', data);
@@ -126,6 +128,16 @@ mongoose
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  const memoryUsage = process.memoryUsage();
+  const rssInMb = memoryUsage.rss / 1024 / 1024;  // Преобразуем байты в мегабайты
+  console.log(`${rssInMb.toFixed(2)} MB`); 
+
+  next();
+});
+
 const port = process.env.PORT || 3001;
 
 app.post("/register", userValidationRules, UserControllers.register);
@@ -137,7 +149,17 @@ app.delete("/todo/:id", verifyToken, TodoControllers.deleteTodoById);
 app.put("/todo/:id", verifyToken, TodoControllers.updateTodoById);
 
 
+
 // Telegram crypto bot start
+
+
+app.post('/bot', (req, res) => {
+  const update = req.body;  // Telegram отправляет данные в теле запроса
+  bot.processUpdate(update); // Обрабатываем обновление
+  res.send('ok');  // Отправляем ответ Telegram, чтобы подтвердить получение
+});
+
+
 app.post('/send-telegram-message', (req, res) => {
   
   const message  = req.body.text; // Получаем сообщение из тела запроса
@@ -149,10 +171,11 @@ app.post('/send-telegram-message', (req, res) => {
   res.send('Messages are being sent');
 });
 
-app.get("/server-status",async ()=>{
+app.get("/server-status",async (req,res)=>{
   const users = await getAllUsers(); 
   console.log('users in mongo db',users)
   console.log(`previousPrice ${previousPrice}`);
+  res.send('ok');
 });
 
 
@@ -171,11 +194,28 @@ const addUserToDatabase = async (userId) => {
   }
 };
 
+// bot.onText(/\/start/, async (msg) => {
+//   const userId = msg.from.id; // Получаем ID пользователя из сообщения
+//   await addUserToDatabase(userId); // Добавляем в базу данных
+//   console.log(userId+ ' включили бота')
+//   bot.sendMessage(userId, 'Вы включили бота!'); // Отправляем сообщение пользователю
+// });
+
 bot.onText(/\/start/, async (msg) => {
   const userId = msg.from.id; // Получаем ID пользователя из сообщения
   await addUserToDatabase(userId); // Добавляем в базу данных
-  bot.sendMessage(userId, 'Вы включили бота!'); // Отправляем сообщение пользователю
+  console.log(userId+ ' включили бота')
+  bot.sendMessage(userId, 'Вы включили бота !'); // Отправляем сообщение пользователю
 });
+
+bot.on('message', async (msg) => {
+  const userId = msg.from.id; // Получаем ID пользователя из сообщения
+  const text = msg.text; // Получаем текст сообщения
+
+  console.log(`Получено сообщение от ${userId}: ${text}`); 
+  await bot.sendMessage(userId, `Вы написали: ${text}`);
+});
+
 
 setInterval(getELONPrice, 1000 * 60 * 7);
 // Telegram crypto bot end
